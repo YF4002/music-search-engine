@@ -1,0 +1,139 @@
+// const searchInput = document.getElementById('search-input');
+// const searchButton = document.getElementById('search-button');
+// const soundNamesContainer = document.querySelector('.sound-names');
+// const resultsContainer = document.querySelector('.results-container');
+// const titleContainer = document.querySelector('.title');
+// const descriptionContainer = document.querySelector('.description-container');
+// const createdOn = document.getElementById('created-on');
+// const downloadCount = document.getElementById('download-count');
+// const averageRating = document.getElementById('average-rating');
+// const waveform = document.getElementById('wave');
+
+// // store sounds returned from search by id for quick lookup
+// const soundsById = new Map();
+
+// // Search and display results
+// searchButton.addEventListener('click', () => {
+//     const query = searchInput.value.trim();
+//     if (!query) return;
+
+//     // Clear previous search results  
+//     soundNamesContainer.innerHTML = '';
+//     soundsById.clear();
+
+//     fetch(`https://freesound.org/apiv2/search/text/?query=${encodeURIComponent(query)}&token=KcUGoRtRWRUYh17ZNx6iWLecwvjAHPzrcIN9CTQA&page_size=20`)
+//         .then(response => response.json())
+//         .then(data => {
+//             if (!data || !Array.isArray(data.results)) return;
+//             data.results.forEach(sound => {
+//                 // store sound object for later use
+//                 soundsById.set(String(sound.id), sound);
+//                 const soundElement = document.createElement('div');
+//                 soundElement.classList.add('sound-item');
+//                 soundElement.dataset.id = sound.id;
+//                 soundElement.innerHTML = `
+//                     <h2>${sound.name}</h2>
+//                     <p class="username">by ${sound.username}</p>
+//                     <hr>
+//                 `;
+//                 soundNamesContainer.appendChild(soundElement);
+//             });
+//         })
+//         .catch(error => console.error('Error fetching data:', error));
+// });
+
+// // Click on a song and show details in the right column
+// soundNamesContainer.addEventListener('click', (event) => {
+//     const item = event.target.closest('.sound-item');
+//     if (!item) return;
+//     const id = item.dataset.id;
+//     let sound = soundsById.get(String(id));
+//     // Always fetch the full sound details from the API so we have
+//     // description, num_downloads, avg_rating, previews and images available.
+//     fetch(`https://freesound.org/apiv2/sounds/${encodeURIComponent(id)}/?token=KcUGoRtRWRUYh17ZNx6iWLecwvjAHPzrcIN9CTQA`)
+//         .then(r => r.json())
+//         .then(s => {
+//             if (!s) return;
+//             // cache the detailed sound object
+//             soundsById.set(String(id), s);
+//             SoundDetails(s);
+//         })
+//         .catch(err => console.error('Error fetching sound details:', err));
+// });
+
+// function SoundDetails(sound) {
+//     // Title and username
+//     titleContainer.innerHTML = `
+//         <p id="names">${sound.name || 'Unknown'}</p>
+//         <p id="username">by ${sound.username || 'Unknown'}</p>
+//     `;
+
+//     // Description and tags 
+//     const descriptionText = sound.description ? sound.description : 'No description available.';
+//     const tagsText = Array.isArray(sound.tags) ? sound.tags.join(', ') : (sound.tags || 'No tags');
+//     descriptionContainer.innerHTML = `
+//         <p id="description">${descriptionText}</p>
+//         <p id="tags">Tags: ${tagsText}</p>
+//     `;
+
+//     // About container
+//     // Created date (format nicely)
+//     let createdText = 'Unknown';
+//     if (sound.created) {
+//         try {
+//             createdText = new Date(sound.created).toLocaleString();
+//         } catch (e) {
+//             createdText = sound.created;
+//         }
+//     }
+//     createdOn.innerHTML = `
+//         <h1>Created on</h1>
+//         <p>${createdText}</p>
+//     `;
+
+//     // Downloads and rating (these may be missing on search result objects)
+//     const downloads = (typeof sound.num_downloads !== 'undefined') ? sound.num_downloads : 'N/A';
+//     downloadCount.innerHTML = `
+//         <h1>Download Count</h1>
+//         <p>${downloads}</p>
+//     `;
+
+//     const avg = (typeof sound.avg_rating !== 'undefined' && sound.avg_rating !== null) ? (sound.avg_rating + ' / 5') : 'N/A';
+//     averageRating.innerHTML = `
+//         <h1>Average Rating</h1>
+//         <p>${avg}</p>
+//     `;
+
+//     // Waveform image: the API returns images.waveform_m / waveform_l in many cases.
+//     // Try common fields and fall back to a placeholder message.
+//     let waveformHtml = '<h1>Waveform</h1>\n<p>No waveform available.</p>';
+//     if (sound.images) {
+//         const imgUrl = sound.images.waveform_l || sound.images.waveform_m || sound.images.waveform || sound.images.wave;
+//         if (imgUrl) {
+//             waveformHtml = `<h1>Waveform</h1>\n<img src="${imgUrl}" alt="waveform" style="max-width:100%;height:auto;">`;
+//         }
+//     }
+//     waveform.innerHTML = waveformHtml;
+
+//     // Update preview audio if available (previews object)
+//     const previewDiv = document.getElementById('preview');
+//     if (previewDiv) {
+//         let previewUrl = null;
+//         if (sound.previews) {
+//             previewUrl = sound.previews['preview-hq-mp3'] || sound.previews['preview-lq-mp3'] || sound.previews['preview-lq-ogg'] || sound.previews['preview-hq-ogg'];
+//         }
+//         if (previewUrl) {
+//             previewDiv.innerHTML = `<audio controls src="${previewUrl}"></audio>`;
+//         } else {
+//             // keep existing audio element if present or show placeholder
+//             if (!previewDiv.querySelector('audio')) {
+//                 previewDiv.innerHTML = `<p>No preview available.</p>`;
+//             }
+//         }
+//     }
+// }
+
+// //keyboard Enter to search
+// searchInput.addEventListener('keypress', (e) => {
+//     if (e.key === 'Enter') searchButton.click();
+// });
