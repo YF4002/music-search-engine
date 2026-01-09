@@ -13,7 +13,7 @@ const averageRating = document.getElementById('average-rating');
 const waveform = document.getElementById('wave');
 
 // API token
-const API_TOKEN = 'KcUGoRtRWRUYh17ZNx6iWLecwvjAHPzrcIN9CTQA';
+const API_TOKEN = '';
 
 // current selected sound details 
 let currentSound = null;
